@@ -1,0 +1,135 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lista de Tareas y Edición</title>
+    <link rel="stylesheet" type="text/css" href="{% static 'main.css' %}">
+</head>
+
+<body>
+    <div class="task-table-container">
+        <h1>Lista de Tareas</h1>
+        <table id="task-table">
+            <thead>
+                <tr>
+                    <th>Título</th>
+                    <th>Descripción</th>
+                    <th>Email</th>
+                    <th>Fecha de Vencimiento</th>
+                    <th>Completada</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- Aquí se llenarán las tareas -->
+            </tbody>
+        </table>
+
+        <!-- Formulario de edición -->
+        <div id="edit-form-container" style="display: none;">
+            <h2>¿Seguro que quiere eliminar la tarea <span id="task-title"></span>?</h2>
+            <input type="hidden" id="task-id" />
+            <button id="delete-task-btn">Eliminar</button>
+        </div>
+        <div class="button-table">
+            <a class="table-btn" href="{% url 'index' %}"><button>Regresar</button></a>
+        </div>
+    </div>
+
+    <script>
+        const taskTableBody = document.querySelector('#task-table tbody');
+        const editFormContainer = document.getElementById('edit-form-container');
+        const taskIdInput = document.getElementById('task-id');
+        const titleInput = document.getElementById('edit-title');
+        const descriptionInput = document.getElementById('edit-description');
+        const emailInput = document.getElementById('edit-email');
+        const dueDateInput = document.getElementById('edit-due-date');
+        const completedInput = document.getElementById('edit-completed');
+        const taskTitle = document.getElementById('task-title');
+        const deleteTaskButton = document.getElementById('delete-task-btn');
+
+        // Función para crear una fila en la tabla de tareas
+        function createTaskRow(task) {
+            const tr = document.createElement('tr');
+            tr.innerHTML = `
+                <td>${task.title}</td>
+                <td>${task.description || 'Sin descripción'}</td>
+                <td>${task.email || 'Sin email'}</td>
+                <td>${task.due_date ? new Date(task.due_date).toLocaleString() : 'No especificada'}</td>
+                <td>${task.completed ? 'Sí' : 'No'}</td>
+                <td><button class="delete-task-btn" data-task-id="${task.id}">Eliminar</button></td>
+            `;
+            return tr;
+        }
+
+        // Función para obtener las tareas
+        function fetchTasks() {
+            fetch('{% url "tasks" %}')
+                .then(response => response.json())
+                .then(data => {
+                    taskTableBody.innerHTML = '';
+                    data.forEach(task => {
+                        const taskRow = createTaskRow(task);
+                        taskTableBody.appendChild(taskRow);
+                    });
+
+                    // Agregar eventos a los botones de editar
+                    const deleteButtons = document.querySelectorAll('.delete-task-btn');
+                    deleteButtons.forEach(button => {
+                        button.addEventListener('click', function () {
+                            const taskId = this.getAttribute('data-task-id');
+                            loadTaskIntoForm(taskId);
+                        });
+                    });
+                })
+                .catch(error => {
+                    console.error('Error fetching tasks:', error);
+                });
+        }
+
+        function loadTaskIntoForm(taskId) {
+            fetch(`{% url "tasks" %}/${taskId}`)
+                .then(response => response.json())
+                .then(task => {
+                    taskIdInput.value = task.id;
+                    taskTitle.innerText = task.title;
+                    editFormContainer.style.display = 'block';
+                })
+                .catch(error => {
+                    console.error('Error fetching task details:', error);
+                });
+        };
+
+        deleteTaskButton.addEventListener('click', function () {
+            console.log('delete task');
+            const taskId = taskIdInput.value;
+            fetch(`{% url "tasks" %}/${taskId}`, {
+                method: 'DELETE',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': '{{ csrf_token }}',
+                },
+            })
+                .then(response => {
+                    if (response.ok) {
+                        alert('Tarea eliminada correctamente.');
+                        editFormContainer.style.display = 'none';
+                        fetchTasks(); // Recargar la lista de tareas
+                    } else {
+                        throw new Error('Error al actualizar la tarea.');
+                    }
+                })
+                .catch(error => {
+                    alert('Error actualizando la tarea: ' + error.message);
+                });
+        });
+
+        // Cargar las tareas al cargar la página
+        document.addEventListener('DOMContentLoaded', fetchTasks);
+    </script>
+</body>
+
+</html>

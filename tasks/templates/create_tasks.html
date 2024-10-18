@@ -1,0 +1,94 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create Task</title>
+    <link rel="stylesheet" type="text/css" href="{% static 'main.css' %}">
+</head>
+
+<body>
+    <div class="button-container">
+
+        <div class="form-container">
+            <h1>Crear tarea</h1>
+            <input type="text" id="title" placeholder="Título" required>
+            <textarea id="description" placeholder="Descripción"></textarea>
+            <input type="email" id="email" placeholder="Email" required>
+            <label for="due_date">Fecha de vencimiento: </label>
+            <input type="datetime-local" id="due_date" required>
+
+            <button id="create-task-btn" disabled>Crear tarea</button>
+        </div>
+        <div>
+            <a href="{% url 'index' %}"><button>Regresar</button></a>
+        </div>
+
+    </div>
+    <script>
+        const titleInput = document.getElementById('title');
+        const descriptionInput = document.getElementById('description');
+        const emailInput = document.getElementById('email');
+        const dueDateInput = document.getElementById('due_date');
+        const createTaskButton = document.getElementById('create-task-btn');
+
+
+        function checkFormCompletion() {
+            const isFormComplete = titleInput.value &&
+                descriptionInput.value &&
+                emailInput.value &&
+                dueDateInput.value;
+            createTaskButton.disabled = !isFormComplete;
+        }
+
+        titleInput.addEventListener('input', checkFormCompletion);
+        descriptionInput.addEventListener('input', checkFormCompletion);
+        emailInput.addEventListener('input', checkFormCompletion);
+        dueDateInput.addEventListener('input', checkFormCompletion);
+
+        // Envío
+        createTaskButton.addEventListener('click', function () {
+            const title = titleInput.value;
+            const description = descriptionInput.value;
+            const email = emailInput.value;
+            const dueDate = new Date(dueDateInput.value).toISOString();
+
+            const data = {
+                title: title,
+                description: description,
+                email: email,
+                due_date: dueDate,
+            };
+
+            fetch('{% url "tasks" %}', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(data),
+            })
+                .then(response => {
+                    if (response.ok) {
+                        return response.json();
+                    } else {
+                        throw new Error('Error creating task');
+                    }
+                })
+                .then(data => {
+                    alert('¡Tarea creada!');
+                    titleInput.value = '';
+                    descriptionInput.value = '';
+                    emailInput.value = '';
+                    dueDateInput.value = '';
+                    checkFormCompletion();
+                })
+                .catch(error => {
+                    alert('Error creating task: ' + error.message);
+                });
+        });
+    </script>
+</body>
+
+</html>

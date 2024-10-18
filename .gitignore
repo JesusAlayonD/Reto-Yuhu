@@ -1,0 +1,5 @@
+challenge/.env
+venv
+challenge/__pycache__
+tasks/__pycache__
+tasks/migrations/__pycache__

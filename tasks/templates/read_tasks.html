@@ -1,0 +1,70 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lista de Tareas</title>
+    <link rel="stylesheet" type="text/css" href="{% static 'main.css' %}">
+</head>
+
+<body>
+    <div class="task-table-container">
+        <h1>Lista de Tareas</h1>
+        <table id="task-table">
+            <thead>
+                <tr>
+                    <th>Título</th>
+                    <th>Descripción</th>
+                    <th>Email</th>
+                    <th>Fecha de Vencimiento</th>
+                    <th>Completada</th>
+                </tr>
+            </thead>
+            <tbody>
+            </tbody>
+        </table>
+        <div class="button-table">
+            <a class="table-btn" href="{% url 'index' %}"><button>Regresar</button></a>
+        </div>
+    </div>
+
+    <script>
+        // Función para crear un elemento de tarea en la tabla
+        function createTaskRow(task) {
+            const tr = document.createElement('tr');
+            tr.innerHTML = `
+                <td>${task.title}</td>
+                <td>${task.description || 'Sin descripción'}</td>
+                <td>${task.email || 'Sin email'}</td>
+                <td>${task.due_date ? new Date(task.due_date).toLocaleString() : 'No especificada'}</td>
+                <td>${task.completed ? 'Sí' : 'No'}</td>
+            `;
+            return tr;
+        }
+
+        // Función para obtener y mostrar las tareas
+        function fetchTasks() {
+            fetch('{% url "tasks" %}')
+                .then(response => response.json())
+                .then(data => {
+                    const taskTableBody = document.querySelector('#task-table tbody');
+                    taskTableBody.innerHTML = '';
+                    data.forEach(task => {
+                        const taskRow = createTaskRow(task);
+                        taskTableBody.appendChild(taskRow);
+                    });
+                })
+                .catch(error => {
+                    console.error('Error fetching tasks:', error);
+                    alert('Error al obtener las tareas.');
+                });
+        }
+
+        // Cargar las tareas cuando la página esté lista
+        document.addEventListener('DOMContentLoaded', fetchTasks);
+    </script>
+</body>
+
+</html>

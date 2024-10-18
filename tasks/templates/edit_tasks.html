@@ -1,0 +1,161 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lista de Tareas y Edición</title>
+    <link rel="stylesheet" type="text/css" href="{% static 'main.css' %}">
+</head>
+
+<body>
+    <div class="task-table-container">
+        <h1>Lista de Tareas</h1>
+        <table id="task-table">
+            <thead>
+                <tr>
+                    <th>Título</th>
+                    <th>Descripción</th>
+                    <th>Email</th>
+                    <th>Fecha de Vencimiento</th>
+                    <th>Completada</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- Aquí se llenarán las tareas -->
+            </tbody>
+        </table>
+
+        <!-- Formulario de edición -->
+        <div id="edit-form-container" style="display: none;">
+            <h2>Editar Tarea</h2>
+            <input type="hidden" id="task-id" />
+            <input type="text" id="edit-title" placeholder="Título" required>
+            <textarea id="edit-description" placeholder="Descripción"></textarea>
+            <input type="email" id="edit-email" placeholder="Email" required>
+            <label for="edit-due-date">Fecha de vencimiento:</label>
+            <input type="datetime-local" id="edit-due-date" required>
+            <label for="edit-completed">Completada:</label>
+            <input type="checkbox" id="edit-completed">
+            <button id="save-task-btn">Guardar Cambios</button>
+        </div>
+        <div class="button-table">
+            <a class="table-btn" href="{% url 'index' %}"><button>Regresar</button></a>
+        </div>
+    </div>
+
+    <script>
+        const taskTableBody = document.querySelector('#task-table tbody');
+        const editFormContainer = document.getElementById('edit-form-container');
+        const taskIdInput = document.getElementById('task-id');
+        const titleInput = document.getElementById('edit-title');
+        const descriptionInput = document.getElementById('edit-description');
+        const emailInput = document.getElementById('edit-email');
+        const dueDateInput = document.getElementById('edit-due-date');
+        const completedInput = document.getElementById('edit-completed');
+        const saveTaskButton = document.getElementById('save-task-btn');
+
+        // Función para crear una fila en la tabla de tareas
+        function createTaskRow(task) {
+            const tr = document.createElement('tr');
+            tr.innerHTML = `
+                <td>${task.title}</td>
+                <td>${task.description || 'Sin descripción'}</td>
+                <td>${task.email || 'Sin email'}</td>
+                <td>${task.due_date ? new Date(task.due_date).toLocaleString() : 'No especificada'}</td>
+                <td>${task.completed ? 'Sí' : 'No'}</td>
+                <td><button class="edit-task-btn" data-task-id="${task.id}">Editar</button></td>
+            `;
+            return tr;
+        }
+
+        // Función para obtener las tareas
+        function fetchTasks() {
+            fetch('{% url "tasks" %}')
+                .then(response => response.json())
+                .then(data => {
+                    taskTableBody.innerHTML = '';
+                    data.forEach(task => {
+                        const taskRow = createTaskRow(task);
+                        taskTableBody.appendChild(taskRow);
+                    });
+
+                    // Agregar eventos a los botones de editar
+                    const editButtons = document.querySelectorAll('.edit-task-btn');
+                    editButtons.forEach(button => {
+                        button.addEventListener('click', function () {
+                            const taskId = this.getAttribute('data-task-id');
+                            loadTaskIntoForm(taskId);
+                        });
+                    });
+                })
+                .catch(error => {
+                    console.error('Error fetching tasks:', error);
+                });
+        }
+
+        // Cargar datos de la tarea en el formulario para editar
+        function loadTaskIntoForm(taskId) {
+            fetch(`{% url "tasks" %}/${taskId}`)
+                .then(response => response.json())
+                .then(task => {
+                    taskIdInput.value = task.id;
+                    titleInput.value = task.title;
+                    descriptionInput.value = task.description || '';
+                    emailInput.value = task.email || '';
+                    dueDateInput.value = task.due_date ? task.due_date.slice(0, 16) : ''; // Ajustar formato de fecha
+                    completedInput.checked = task.completed;
+                    editFormContainer.style.display = 'block';
+                })
+                .catch(error => {
+                    console.error('Error fetching task details:', error);
+                });
+        }
+
+        // Guardar cambios al hacer clic en el botón de guardar
+        saveTaskButton.addEventListener('click', function () {
+            const taskId = taskIdInput.value;
+            const title = titleInput.value;
+            const description = descriptionInput.value;
+            const email = emailInput.value;
+            const dueDate = new Date(dueDateInput.value).toISOString();
+            const completed = completedInput.checked;
+
+            const updatedTaskData = {
+                title: title,
+                description: description,
+                email: email,
+                due_date: dueDate,
+                completed: completed,
+            };
+
+            fetch(`{% url "tasks" %}/${taskId}`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': '{{ csrf_token }}',
+                },
+                body: JSON.stringify(updatedTaskData),
+            })
+                .then(response => {
+                    if (response.ok) {
+                        alert('Tarea actualizada correctamente.');
+                        editFormContainer.style.display = 'none';
+                        fetchTasks(); // Recargar la lista de tareas
+                    } else {
+                        throw new Error('Error al actualizar la tarea.');
+                    }
+                })
+                .catch(error => {
+                    alert('Error actualizando la tarea: ' + error.message);
+                });
+        });
+
+        // Cargar las tareas al cargar la página
+        document.addEventListener('DOMContentLoaded', fetchTasks);
+    </script>
+</body>
+
+</html>
