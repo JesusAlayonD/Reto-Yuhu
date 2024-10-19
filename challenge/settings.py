@@ -107,6 +107,25 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
+CELERY_BROKER_URL = 'redis://localhost:6379/0'  
+
+CELERY_RESULT_BACKEND = 'redis://localhost:6379/0'
+
+CELERY_ACCEPT_CONTENT = ['json']
+CELERY_TASK_SERIALIZER = 'json'
+
+# Configuración del servidor de correos SMTP
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'  # El host SMTP
+EMAIL_PORT = 587  # Puerto SMTP para TLS (Gmail usa 587)
+EMAIL_USE_TLS = True  # Habilitar TLS
+EMAIL_USE_SSL = False  # No usar SSL (SSL y TLS no pueden estar ambos en True)
+EMAIL_HOST_USER = 'jesusalayond@gmail.com'  # El correo electrónico desde donde se enviarán los correos
+EMAIL_HOST_PASSWORD = 'mwkpbhvvefhvctvi'  # La contraseña o clave de la aplicación
+
+# Email por defecto desde el cual se enviarán los correos
+DEFAULT_FROM_EMAIL = 'jesusalayond@gmail.com'
+
 
 # Internationalization
 # https://docs.djangoproject.com/en/5.1/topics/i18n/
