@@ -19,8 +19,9 @@ class TaskView(APIView):
         if serializer.is_valid():
             serializer.save()
             send_task_creation_email.delay(serializer.data['title'], serializer.data['email'])
-            print('Tarea creada:')
             return Response(serializer.data, status=status.HTTP_201_CREATED)
+        else:
+                return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 class TaskUDView(APIView):
@@ -41,6 +42,8 @@ class TaskUDView(APIView):
             serializer.save()
             if serializer.is_valid():
                 return Response(serializer.data)
+            else:
+                return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
         except Task.DoesNotExist:
             return Response({'error': 'Tarea no encontrada'}, status=status.HTTP_404_NOT_FOUND)
     

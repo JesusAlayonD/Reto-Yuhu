@@ -120,8 +120,8 @@ EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_PORT = 587  
 EMAIL_USE_TLS = True  
 EMAIL_USE_SSL = False  
-EMAIL_HOST_USER = 'jesusalayond@gmail.com'  
-EMAIL_HOST_PASSWORD = 'mwkpbhvvefhvctvi'  
+EMAIL_HOST_USER = env('EMAIL')  
+EMAIL_HOST_PASSWORD = env('EMAIL_PASSWORD')
 
 
 DEFAULT_FROM_EMAIL = 'jesusalayond@gmail.com'
