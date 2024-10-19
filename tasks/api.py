@@ -39,8 +39,8 @@ class TaskUDView(APIView):
         try:
             task = Task.objects.get(id=id)
             serializer = TaskSerializer(task, data=request.data)
-            serializer.save()
             if serializer.is_valid():
+                serializer.save()
                 return Response(serializer.data)
             else:
                 return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
