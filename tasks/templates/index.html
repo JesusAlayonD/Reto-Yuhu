@@ -7,7 +7,150 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Bienvenido!</title>
-    <link rel="stylesheet" href="{% static 'main.css' %}">
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #f4f4f4;
+            font-family: Arial, sans-serif;
+        }
+
+        .button-container {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        button {
+            padding: 15px 30px;
+            font-size: 16px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            background-color: #dfeeff;
+            width: 100%;
+        }
+
+        a {
+            text-decoration: none;
+            width: 100%;
+        }
+
+        .button-table {
+            padding-top: 15px;
+            width: 50%;
+            margin: 0 auto;
+        }
+
+        button:hover {
+            background-color: #007bff;
+            color: rgb(255, 255, 255);
+        }
+
+
+
+        .form-container {
+            background-color: #ffffff;
+            /* Fondo blanco para el contenedor */
+            padding: 20px;
+            /* Espaciado interno */
+            border-radius: 8px;
+            /* Bordes redondeados */
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            /* Sombra suave */
+            width: 300px;
+            /* Ancho fijo para el formulario */
+            text-align: center;
+            /* Centrar el texto */
+        }
+
+        h1 {
+            font-size: 24px;
+            /* Tamaño de fuente del título */
+            margin-bottom: 20px;
+            /* Espaciado inferior */
+            text-align: center;
+        }
+
+        input[type="text"],
+        input[type="email"],
+        input[type="datetime-local"],
+        textarea {
+            width: 100%;
+            /* Ancho completo */
+            padding: 10px;
+            /* Espaciado interno */
+            margin-bottom: 10px;
+            /* Espaciado inferior */
+            border: 1px solid #ccc;
+            /* Borde ligero */
+            border-radius: 4px;
+            /* Bordes redondeados */
+            box-sizing: border-box;
+            /* Incluye el padding y el borde en el ancho total */
+            font-size: 14px;
+            /* Tamaño de fuente */
+        }
+
+        button:disabled {
+            background-color: #cccccc;
+            /* Color del botón cuando está deshabilitado */
+            cursor: not-allowed;
+            /* Cambiar el cursor cuando está deshabilitado */
+        }
+
+        button:hover:not(:disabled) {
+            background-color: #007bff;
+            /* Color de fondo al pasar el ratón cuando está habilitado */
+            color: rgb(255, 255, 255);
+            /* Color del texto al pasar el ratón */
+        }
+
+        textarea {
+            resize: none;
+            /* Deshabilitar el cambio de tamaño del textarea */
+            height: 80px;
+            /* Altura fija para el textarea */
+        }
+
+        .task-table-container {
+            background-color: #ffffff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            width: 80%;
+            max-width: 1000px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        th,
+        td {
+            padding: 10px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+
+        th {
+            background-color: #f4f4f4;
+        }
+
+        tr:hover {
+            background-color: #f1f1f1;
+        }
+
+        tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+    </style>
 </head>
 
 <body>
