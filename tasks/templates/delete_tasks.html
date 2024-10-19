@@ -24,11 +24,10 @@
                 </tr>
             </thead>
             <tbody>
-                <!-- Aquí se llenarán las tareas -->
+
             </tbody>
         </table>
 
-        <!-- Formulario de edición -->
         <div id="edit-form-container" style="display: none;">
             <h2>¿Seguro que quiere eliminar la tarea <span id="task-title"></span>?</h2>
             <input type="hidden" id="task-id" />
@@ -51,7 +50,7 @@
         const taskTitle = document.getElementById('task-title');
         const deleteTaskButton = document.getElementById('delete-task-btn');
 
-        // Función para crear una fila en la tabla de tareas
+
         function createTaskRow(task) {
             const tr = document.createElement('tr');
             tr.innerHTML = `
@@ -65,7 +64,6 @@
             return tr;
         }
 
-        // Función para obtener las tareas
         function fetchTasks() {
             fetch('{% url "tasks" %}')
                 .then(response => response.json())
@@ -76,7 +74,6 @@
                         taskTableBody.appendChild(taskRow);
                     });
 
-                    // Agregar eventos a los botones de editar
                     const deleteButtons = document.querySelectorAll('.delete-task-btn');
                     deleteButtons.forEach(button => {
                         button.addEventListener('click', function () {
@@ -127,7 +124,6 @@
                 });
         });
 
-        // Cargar las tareas al cargar la página
         document.addEventListener('DOMContentLoaded', fetchTasks);
     </script>
 </body>

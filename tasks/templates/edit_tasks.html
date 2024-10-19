@@ -24,7 +24,7 @@
                 </tr>
             </thead>
             <tbody>
-                <!-- Aquí se llenarán las tareas -->
+
             </tbody>
         </table>
 
@@ -57,7 +57,7 @@
         const completedInput = document.getElementById('edit-completed');
         const saveTaskButton = document.getElementById('save-task-btn');
 
-        // Función para crear una fila en la tabla de tareas
+
         function createTaskRow(task) {
             const tr = document.createElement('tr');
             tr.innerHTML = `
@@ -71,7 +71,6 @@
             return tr;
         }
 
-        // Función para obtener las tareas
         function fetchTasks() {
             fetch('{% url "tasks" %}')
                 .then(response => response.json())
@@ -82,7 +81,6 @@
                         taskTableBody.appendChild(taskRow);
                     });
 
-                    // Agregar eventos a los botones de editar
                     const editButtons = document.querySelectorAll('.edit-task-btn');
                     editButtons.forEach(button => {
                         button.addEventListener('click', function () {
@@ -96,7 +94,6 @@
                 });
         }
 
-        // Cargar datos de la tarea en el formulario para editar
         function loadTaskIntoForm(taskId) {
             fetch(`{% url "tasks" %}/${taskId}`)
                 .then(response => response.json())
@@ -114,7 +111,6 @@
                 });
         }
 
-        // Guardar cambios al hacer clic en el botón de guardar
         saveTaskButton.addEventListener('click', function () {
             const taskId = taskIdInput.value;
             const title = titleInput.value;
@@ -143,7 +139,7 @@
                     if (response.ok) {
                         alert('Tarea actualizada correctamente.');
                         editFormContainer.style.display = 'none';
-                        fetchTasks(); // Recargar la lista de tareas
+                        fetchTasks();
                     } else {
                         throw new Error('Error al actualizar la tarea.');
                     }
@@ -153,7 +149,7 @@
                 });
         });
 
-        // Cargar las tareas al cargar la página
+
         document.addEventListener('DOMContentLoaded', fetchTasks);
     </script>
 </body>

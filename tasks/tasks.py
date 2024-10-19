@@ -1,5 +1,3 @@
-# tasks.py en alguna de tus apps de Django
-
 from celery import shared_task
 from django.core.mail import send_mail
 

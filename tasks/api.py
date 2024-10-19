@@ -25,6 +25,7 @@ class TaskView(APIView):
 
 class TaskUDView(APIView):
     def get(self, request, id):
+        # Obtener una sola tarea
         try:
             task = Task.objects.get(id=id)
             serializer = TaskSerializer(task)
@@ -33,6 +34,7 @@ class TaskUDView(APIView):
             return Response({'error': 'Tarea no encontrada'}, status=status.HTTP_404_NOT_FOUND)
 
     def put(self, request, id):
+        # Actualizar una sola tarea
         try:
             task = Task.objects.get(id=id)
             serializer = TaskSerializer(task, data=request.data)
@@ -43,6 +45,7 @@ class TaskUDView(APIView):
             return Response({'error': 'Tarea no encontrada'}, status=status.HTTP_404_NOT_FOUND)
     
     def delete(self, request, id):
+        # Eliminar una sola tarea
         try: 
             task = Task.objects.get(id=id)
             task.delete()

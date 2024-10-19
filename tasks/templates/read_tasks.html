@@ -31,7 +31,6 @@
     </div>
 
     <script>
-        // Función para crear un elemento de tarea en la tabla
         function createTaskRow(task) {
             const tr = document.createElement('tr');
             tr.innerHTML = `
@@ -44,7 +43,6 @@
             return tr;
         }
 
-        // Función para obtener y mostrar las tareas
         function fetchTasks() {
             fetch('{% url "tasks" %}')
                 .then(response => response.json())
@@ -62,7 +60,6 @@
                 });
         }
 
-        // Cargar las tareas cuando la página esté lista
         document.addEventListener('DOMContentLoaded', fetchTasks);
     </script>
 </body>
